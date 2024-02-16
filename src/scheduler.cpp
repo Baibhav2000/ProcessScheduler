@@ -75,45 +75,86 @@ void Scheduler::results(){
 	std::cout<<std::endl;
 	switch(this->schedulingType){
 		case FCFS:
-			std::cout<<"FCFS Scheduling results : "<<std::endl<<std::endl;
+			std::cout<<"FCFS Scheduling results :"<<std::endl;
+			std::cout<<"-------------------------"<<std::endl<<std::endl;
 			break;
 		
 		case ROUND_ROBIN:
-			std::cout<<"Round Robin Scheduling results : "<<std::endl<<std::endl;
+			std::cout<<"Round Robin Scheduling results :"<<std::endl;
+			std::cout<<"--------------------------------"<<std::endl<<std::endl;
 			break;
 
 		case SJF:
-			std::cout<<"Shortest Job First Scheduling results : "<<std::endl<<std::endl;
+			std::cout<<"Shortest Job First Scheduling results :"<<std::endl;
+			std::cout<<"---------------------------------------"<<std::endl<<std::endl;
 			break;
 
 		case SRTF:
-			std::cout<<"Shortest Remaining Time First Scheduling results : "<<std::endl<<std::endl;
+			std::cout<<"Shortest Remaining Time First Scheduling results :"<<std::endl;
+			std::cout<<"--------------------------------------------------"<<std::endl<<std::endl;
 			break;			
 	}
 
-	
+	std::cout<<"+------------+--------------+------------+-----------------+-----------------+--------------+"<<std::endl;	
 
-	std::cout<<"Process ID";
-	std::cout<<" Arrival Time";
-	std::cout<<" Burst Time";
-	std::cout<<" Completion Time";
-	std::cout<<" Turnaround Time";
-	std::cout<<" Waiting Time"<<std::endl;
+	std::cout<<"| Process ID |";
+	std::cout<<" Arrival Time |";
+	std::cout<<" Burst Time |";
+	std::cout<<" Completion Time |";
+	std::cout<<" Turnaround Time |";
+	std::cout<<" Waiting Time |"<<std::endl;
+
+	std::cout<<"+------------+--------------+------------+-----------------+-----------------+--------------+"<<std::endl;
 
 	int totalTurnaroundTime = 0;
 	int totalWaitingTime = 0;
 
+	int numSpaces = 0;
 	for(auto process: this->processes){
-		std::cout<<process.getProcessID();
-		std::cout<<"\t\t"<<process.getArrivalTime();
-		std::cout<<"\t\t"<<process.getBurstTime();
-		std::cout<<"\t\t"<<process.getCompletionTime();
-		std::cout<<"\t\t"<<process.getTurnaroundTime();
-		std::cout<<"\t\t"<<process.getWaitingTime()<<std::endl;
+		std::cout<<"| "<<process.getProcessID();
+
+		numSpaces = 12 - (1 + std::to_string(process.getProcessID()).length());
+
+		for(int i = 0; i < numSpaces; i++)
+			std::cout<<" ";
+		
+
+		std::cout<<"| "<<process.getArrivalTime();
+		numSpaces = 14 - (1 + std::to_string(process.getArrivalTime()).length());
+
+		for(int i = 0; i < numSpaces; i++)
+			std::cout<<" ";
+
+		std::cout<<"| "<<process.getBurstTime();
+		numSpaces = 12 - (1 + std::to_string(process.getBurstTime()).length());
+
+		for(int i = 0; i < numSpaces; i++)
+			std::cout<<" ";
+
+		std::cout<<"| "<<process.getCompletionTime();
+		numSpaces = 17 - (1 + std::to_string(process.getCompletionTime()).length());
+
+		for(int i = 0; i < numSpaces; i++)
+			std::cout<<" ";
+		std::cout<<"| "<<process.getTurnaroundTime();
+		numSpaces = 17 - (1 + std::to_string(process.getTurnaroundTime()).length());
+
+		for(int i = 0; i < numSpaces; i++)
+			std::cout<<" ";
+		std::cout<<"| "<<process.getWaitingTime();
+		numSpaces = 14- (1 + std::to_string(process.getWaitingTime()).length());
+
+		for(int i = 0; i < numSpaces; i++)
+			std::cout<<" ";
+		
+		std::cout<<"|"<<std::endl;
+		
 
 		totalTurnaroundTime += process.getTurnaroundTime();
 		totalWaitingTime += process.getWaitingTime();
 	}
+
+	std::cout<<"+------------+--------------+------------+-----------------+-----------------+--------------+"<<std::endl;
 
 	float avgTurnaroundTime = (float)(totalTurnaroundTime) / (float)(processes.size());
 	float avgWaitingTime = (float)(totalWaitingTime) / (float)(processes.size());
