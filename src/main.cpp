@@ -11,7 +11,12 @@ std::vector<std::vector<std::string>> readCSV(const std::string &filename){
 	std::vector<std::vector<std::string>> data;
 	std::string line;
 
+    int lineIdx = 0;
 	while(std::getline(file, line)){
+        if(lineIdx == 0){
+            lineIdx++;
+            continue;
+        }
 		std::vector<std::string> row;
 		std::stringstream ss(line);
 		std::string cell;
