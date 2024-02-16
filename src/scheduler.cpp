@@ -152,9 +152,11 @@ void Scheduler::results(){
 
 		totalTurnaroundTime += process.getTurnaroundTime();
 		totalWaitingTime += process.getWaitingTime();
+
+        std::cout<<"+------------+--------------+------------+-----------------+-----------------+--------------+"<<std::endl;
 	}
 
-	std::cout<<"+------------+--------------+------------+-----------------+-----------------+--------------+"<<std::endl;
+	
 
 	float avgTurnaroundTime = (float)(totalTurnaroundTime) / (float)(processes.size());
 	float avgWaitingTime = (float)(totalWaitingTime) / (float)(processes.size());
