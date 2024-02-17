@@ -34,6 +34,8 @@ void Scheduler::fcfsScheduling(){
 		processes[i].setTurnaroundTime(turnaroundTime);
 		int waitingTime = processes[i].getTurnaroundTime() - processes[i].getBurstTime();
 		processes[i].setWaitingTime(waitingTime);
+		int responseTime = processes[i].getWaitingTime();
+		processes[i].setResponseTime(responseTime);
 	}
 }
 
@@ -95,19 +97,21 @@ void Scheduler::results(){
 			break;			
 	}
 
-	std::cout<<"+------------+--------------+------------+-----------------+-----------------+--------------+"<<std::endl;	
+	std::cout<<"+------------+--------------+------------+-----------------+-----------------+--------------+---------------+"<<std::endl;	
 
 	std::cout<<"| Process ID |";
 	std::cout<<" Arrival Time |";
 	std::cout<<" Burst Time |";
 	std::cout<<" Completion Time |";
 	std::cout<<" Turnaround Time |";
-	std::cout<<" Waiting Time |"<<std::endl;
+	std::cout<<" Waiting Time |";
+	std::cout<<" Response Time |"<<std::endl;
 
-	std::cout<<"+------------+--------------+------------+-----------------+-----------------+--------------+"<<std::endl;
+	std::cout<<"+------------+--------------+------------+-----------------+-----------------+--------------+---------------+"<<std::endl;
 
 	int totalTurnaroundTime = 0;
 	int totalWaitingTime = 0;
+	int totalResponseTime = 0;
 
 	int numSpaces = 0;
 	for(auto process: this->processes){
@@ -146,22 +150,31 @@ void Scheduler::results(){
 
 		for(int i = 0; i < numSpaces; i++)
 			std::cout<<" ";
+
+		std::cout<<"| "<<process.getResponseTime();
+		numSpaces = 15- (1 + std::to_string(process.getWaitingTime()).length());
+
+		for(int i = 0; i < numSpaces; i++)
+			std::cout<<" ";
 		
 		std::cout<<"|"<<std::endl;
 		
 
 		totalTurnaroundTime += process.getTurnaroundTime();
 		totalWaitingTime += process.getWaitingTime();
+		totalResponseTime += process.getResponseTime();
 
-        std::cout<<"+------------+--------------+------------+-----------------+-----------------+--------------+"<<std::endl;
+		std::cout<<"+------------+--------------+------------+-----------------+-----------------+--------------+---------------+"<<std::endl;
 	}
 
 	
 
 	float avgTurnaroundTime = (float)(totalTurnaroundTime) / (float)(processes.size());
 	float avgWaitingTime = (float)(totalWaitingTime) / (float)(processes.size());
+	float avgResponseTime = (float)(totalResponseTime) / (float)(processes.size());
 
 	std::cout<<"Average Turnaround Time : "<<avgTurnaroundTime<<std::endl;
-	std::cout<<"Average Waiting Time : "<<avgWaitingTime<<std::endl<<std::endl;
+	std::cout<<"Average Waiting Time : "<<avgWaitingTime<<std::endl;
+	std::cout<<"Average Response Time : "<<avgResponseTime<<std::endl<<std::endl;
 	
 }
