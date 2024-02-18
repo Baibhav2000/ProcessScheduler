@@ -2,6 +2,8 @@
 #include <algorithm>
 #include "scheduler.h"
 
+int timeQuantum = 5;
+
 Scheduler::Scheduler(std::vector<Process> processes, SchedulingType schedulingType){
 	this->processes = processes;
 	this->schedulingType = schedulingType;
@@ -40,11 +42,59 @@ void Scheduler::fcfsScheduling(){
 }
 
 void Scheduler::roundRobinScheduling(){
-	
+
+	std::sort(this->processes.begin(), this->processes.end(), compareByArrivalTime);
+	std::vector<int> remainingBurst;
+
+	for(int i=0; i < this->processes.size(); i++){
+		remainingBurst.push_back(this->processes[i].getBurstTime());
+	}
+
+	int currTimestamp = 0;
+
+	while(1){
+		
+		bool done = true;
+
+		for(int i=0; i < this->processes.size(); i++){
+			if(remainingBurst[i] > 0){
+
+				done = false; //Pending process
+
+				if(this->processes[i].getArrivalTime() >= currTimestamp){
+					currTimestamp = this->processes[i].getArrivalTime();
+				}
+				// Scheduled for the first time
+				if(remainingBurst[i] == this->processes[i].getBurstTime()){
+					this->processes[i].setResponseTime(currTimestamp - this->processes[i].getArrivalTime());
+				}
+
+				if(remainingBurst[i] > timeQuantum){
+					remainingBurst[i] -= timeQuantum;
+					currTimestamp += timeQuantum;
+				}
+				else{
+					currTimestamp += remainingBurst[i];
+					this->processes[i].setCompletionTime(currTimestamp);
+					remainingBurst[i] = 0;
+				}
+			}
+		}
+		
+		if(done)
+			break;
+	}
+
+	std::sort(this->processes.begin(), this->processes.end(), compareByProcessID);
+
+	for(int i=0; i < this->processes.size(); i++){
+		this->processes[i].setTurnaroundTime(this->processes[i].getCompletionTime() - this->processes[i].getArrivalTime());
+		this->processes[i].setWaitingTime(this->processes[i].getTurnaroundTime() - this->processes[i].getBurstTime());
+	}
 }
 
 void Scheduler::sjfScheduling(){
-
+	std::sort(this->processes.begin(), this->processes.end(), compareByArrivalTime);
 }
 
 void Scheduler::srtfScheduling(){
@@ -82,8 +132,8 @@ void Scheduler::results(){
 			break;
 		
 		case ROUND_ROBIN:
-			std::cout<<"Round Robin Scheduling results :"<<std::endl;
-			std::cout<<"--------------------------------"<<std::endl<<std::endl;
+			std::cout<<"Round Robin Scheduling results(Time Quantum = "<<timeQuantum<<") :"<<std::endl;
+			std::cout<<"--------------------------------------------------"<<std::endl<<std::endl;
 			break;
 
 		case SJF:
