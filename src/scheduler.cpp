@@ -121,7 +121,7 @@ void Scheduler::sjfScheduling(){
 			break;
 
 		remainingBurst[minBurstIdx] = 0;
-		this->processes[minBurstIdx].setResponseTime(currTimestamp);
+		this->processes[minBurstIdx].setResponseTime(currTimestamp - this->processes[minBurstIdx].getArrivalTime());
 		currTimestamp += this->processes[minBurstIdx].getBurstTime();
 		this->processes[minBurstIdx].setCompletionTime(currTimestamp);
 
