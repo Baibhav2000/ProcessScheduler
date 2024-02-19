@@ -1,8 +1,37 @@
 #include <iostream>
 #include <algorithm>
+#include <fstream>
+#include <string>
+#include <unordered_map>
+
 #include "scheduler.h"
 
-int timeQuantum = 5;
+std::unordered_map<std::string, std::string> readEnvFile(const std::string &filename){
+	std::unordered_map<std::string, std::string> envMap;
+	std::ifstream file(filename);
+    std::string line;
+
+	if (file.is_open()) {
+        while (std::getline(file, line)) {
+            // Split each line by '=' delimiter
+            size_t delimiterPos = line.find('=');
+            if (delimiterPos != std::string::npos) {
+                std::string key = line.substr(0, delimiterPos);
+                std::string value = line.substr(delimiterPos + 1);
+                envMap[key] = value;
+            }
+        }
+        file.close();
+    } else {
+        std::cerr << "Error opening file: " << filename << std::endl;
+    }
+
+    return envMap;
+}
+
+std::unordered_map<std::string, std::string> envVars = readEnvFile("../.env");
+
+int timeQuantum = std::stoi(envVars["TIME_QUANTUM"]);
 
 Scheduler::Scheduler(std::vector<Process> processes, SchedulingType schedulingType){
 	this->processes = processes;
