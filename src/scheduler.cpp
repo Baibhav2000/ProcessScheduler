@@ -46,6 +46,16 @@ int compareByProcessID(const Process &a, const Process &b){
 	return a.getProcessID() < b.getProcessID();
 }
 
+bool allZeroes(std::vector<int> arr){
+    for(auto ele: arr){
+        if(ele != 0)
+            return false;
+    }
+
+    return true;
+}
+
+
 void Scheduler::fcfsScheduling(){
 	std::sort(this->processes.begin(), this->processes.end(), compareByArrivalTime);
 	
@@ -146,8 +156,14 @@ void Scheduler::sjfScheduling(){
 			}
 		}
 
-		if(minBurstIdx == -1)
-			break;
+		if(minBurstIdx == -1){
+            if(allZeroes(remainingBurst))
+                break;
+			else{
+                currTimestamp++;
+                continue;
+            }
+        }
 
 		remainingBurst[minBurstIdx] = 0;
 		this->processes[minBurstIdx].setResponseTime(currTimestamp - this->processes[minBurstIdx].getArrivalTime());
@@ -188,8 +204,15 @@ void Scheduler::srtfScheduling(){
 			}
 		}
 
-		if(minBurstIdx == -1)
-			break;
+		if(minBurstIdx == -1){
+			if(allZeroes(remainingBurst))
+                break;
+            else{
+                currTimestamp++;
+                continue;
+            }
+
+        }
 
 		if(remainingBurst[minBurstIdx] == this->processes[minBurstIdx].getBurstTime()){
 			this->processes[minBurstIdx].setResponseTime(currTimestamp - this->processes[minBurstIdx].getArrivalTime());
