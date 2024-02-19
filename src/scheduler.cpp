@@ -136,7 +136,50 @@ void Scheduler::sjfScheduling(){
 }
 
 void Scheduler::srtfScheduling(){
+	std::sort(this->processes.begin(), this->processes.end(), compareByArrivalTime);
 
+	int currTimestamp = this->processes[0].getArrivalTime();
+
+	std::vector<int> remainingBurst;
+
+	for(auto process: this->processes){
+		remainingBurst.push_back(process.getBurstTime());
+	}
+
+	while(1){
+		int minBurst = INT32_MAX;
+		int minBurstIdx = -1;
+
+		for(int i=0; i < this->processes.size(); i++){
+			if(remainingBurst[i] > 0){
+				if(this->processes[i].getBurstTime() < minBurst && this->processes[i].getArrivalTime() <= currTimestamp){
+					minBurstIdx = i;
+					minBurst = this->processes[i].getBurstTime();
+				}
+			}
+		}
+
+		if(minBurstIdx == -1)
+			break;
+
+		if(remainingBurst[minBurstIdx] == this->processes[minBurstIdx].getBurstTime()){
+			this->processes[minBurstIdx].setResponseTime(currTimestamp - this->processes[minBurstIdx].getArrivalTime());
+		}
+
+		currTimestamp++;
+		remainingBurst[minBurstIdx]--;
+
+		if(remainingBurst[minBurstIdx] == 0){
+			this->processes[minBurstIdx].setCompletionTime(currTimestamp);
+		}
+	}
+
+	std::sort(this->processes.begin(), this->processes.end(), compareByProcessID);
+
+	for(int i=0; i < this->processes.size(); i++){
+		this->processes[i].setTurnaroundTime(this->processes[i].getCompletionTime() - this->processes[i].getArrivalTime());
+		this->processes[i].setWaitingTime(this->processes[i].getTurnaroundTime() - this->processes[i].getBurstTime());
+	}
 }
 
 void Scheduler::schedule(){
